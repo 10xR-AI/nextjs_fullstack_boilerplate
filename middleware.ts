@@ -2,19 +2,11 @@ import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 
 // Routes that require authentication
-const protectedRoutes = [
-  "/dashboard",
-  "/settings",
-  "/documents",
-  "/history",
-  "/letterhead",
-]
+// Add your protected routes here
+const protectedRoutes: string[] = []
 
 // Routes that should redirect to home if already authenticated
-const authRoutes = [
-  "/login",
-  "/register",
-]
+const authRoutes = ["/login", "/register"]
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -30,9 +22,7 @@ export function middleware(request: NextRequest) {
   )
 
   // Check if the current path is an auth route
-  const isAuthRoute = authRoutes.some((route) =>
-    pathname.startsWith(route)
-  )
+  const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route))
 
   // Redirect unauthenticated users from protected routes to login
   if (isProtectedRoute && !isAuthenticated) {

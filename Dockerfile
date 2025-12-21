@@ -1,4 +1,4 @@
-# AppealGen AI - Development Dockerfile
+# Modern Next.js Boilerplate - Development Dockerfile
 FROM node:22-alpine
 
 # Install dependencies for native modules
@@ -22,5 +22,5 @@ COPY . .
 # Expose port
 EXPOSE 3000
 
-# Start development server
+# Default command (can be overridden in docker-compose)
 CMD ["pnpm", "dev"]

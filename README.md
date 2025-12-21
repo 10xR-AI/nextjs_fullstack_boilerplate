@@ -1,68 +1,40 @@
-# AppealGen AI
+# Modern Next.js Boilerplate
 
-**The AI-Powered Medical Denial Appeal Agent**
-
-Transform 45-minute manual appeals into 60-second AI-generated, citation-backed letters that win.
+A production-ready Next.js starter with authentication, MongoDB, background job processing, and modern tooling.
 
 ---
 
-## The Problem
+## Features
 
-Medical claim denials are a $19 billion annual problem in the US healthcare system:
-
-- **10-17%** of all claims are denied (up 77% since 2022)
-- **45-60 minutes** to manually research and write a single appeal
-- **70%** of difficult appeals are simply written off due to time constraints
-- **1M+ medical billers** in small practices struggle daily with this burden
-
-Medical Necessity denials (CO-50) are the hardest to fight—they require matching clinical notes against payer-specific policies buried in dense 20+ page PDFs.
-
-## The Solution
-
-AppealGen AI is a specialized "Robo-Lawyer" that instantly generates citation-backed appeal letters by matching clinical documentation against payer-specific policies.
-
-### How It Works
-
-1. **Input**: Paste the denial reason and anonymized clinical notes
-2. **Process**: AI retrieves relevant payer policies via RAG and compares against clinical documentation
-3. **Output**: Professional appeal letter with precise policy citations
-
-### Example Output
-
-> *"Pursuant to Aetna Policy #0451, coverage is mandated when the patient demonstrates functional impairment. As noted in the chart dated 3/15/2025, the patient cannot climb stairs, satisfying this requirement. Therefore, the denial is invalid under your own published guidelines."*
-
-## Key Features
-
-- **50%+ Overturn Rate**: AI-generated appeals with policy citations dramatically improve success
-- **Citation-First Architecture**: Every claim links to actual payer policy PDFs
-- **HIPAA Compliant**: Zero-retention data handling for patient privacy
-- **Top 5 Payers Supported**: UnitedHealthcare, Anthem, Aetna, Cigna, Humana
-
-## Target Denial Types
-
-| Phase | Denial Code | Description | AppealGen Fit |
-|-------|-------------|-------------|---------------|
-| MVP | CO-50 | Medical Necessity | Core focus - 50%+ overturn rate |
-| Phase 2 | CO-11 | Diagnosis doesn't justify procedure | Same architecture as CO-50 |
-| Phase 2 | CO-197 | Prior Authorization Retro | Emergency/urgent care appeals |
-| Phase 2 | CO-97 | Bundled services | Modifier justification letters |
-| Phase 3 | CO-96 | Non-covered charge | Coverage exception arguments |
+| Feature | Technology | Description |
+|---------|------------|-------------|
+| **Authentication** | Better Auth | Email/password + Google OAuth with session management |
+| **Database** | MongoDB | Type-safe operations with singleton connection pattern |
+| **Job Queues** | BullMQ + Redis | Reliable background job processing with retries |
+| **UI Components** | shadcn/ui | Pre-built accessible components with Radix UI |
+| **Styling** | Tailwind CSS v4 | Utility-first CSS with CVA variants |
+| **File Uploads** | Uploadthing | Easy file upload handling |
+| **Email** | Resend | Transactional email service |
+| **Testing** | Vitest + Playwright | Unit, integration, and E2E testing |
+| **Containerization** | Docker | Development environment with Redis |
 
 ## Tech Stack
 
-- **Framework**: Next.js 16 with App Router
-- **UI**: React 19, Tailwind CSS v4, Radix UI
-- **AI/LLM**: GPT-4o / Claude Sonnet
-- **RAG System**: Vector database of payer Clinical Policy Bulletins
+- **Framework**: Next.js 16 (App Router), React 19
+- **Styling**: Tailwind CSS v4, shadcn/ui, Radix UI
+- **Auth**: Better Auth with MongoDB adapter
+- **Database**: MongoDB (Atlas recommended)
+- **Job Queue**: BullMQ with Redis
 - **Testing**: Vitest, Playwright, Storybook
-- **Type Safety**: Strict TypeScript with ts-reset
+- **Package Manager**: pnpm (via Corepack)
 
-## Getting Started
+## Quick Start
 
 ### Prerequisites
 
 - Node.js >= 20.9.0
 - pnpm (via Corepack)
+- Docker (optional, for Redis)
 
 ### Installation
 
@@ -70,66 +42,186 @@ AppealGen AI is a specialized "Robo-Lawyer" that instantly generates citation-ba
 # Enable Corepack for pnpm
 corepack enable
 
-# Install dependencies
+# Clone and install
+git clone <your-repo-url>
+cd modern-nextjs-boilerplate
 pnpm install
+
+# Configure environment
+cp .env.example .env.local
+# Edit .env.local with your values
 
 # Start development server
 pnpm dev
 ```
 
-### Available Commands
+### With Docker (Recommended)
 
 ```bash
-pnpm dev              # Start dev server with Turbopack
-pnpm build            # Production build
-pnpm test             # Run unit tests
-pnpm e2e:headless     # Run E2E tests
-pnpm storybook        # Component development
-pnpm lint             # Code linting
+# Copy environment file
+cp .env.example .env.local
+# Edit .env.local with your MongoDB URI and secrets
+
+# Start all services (app + worker + redis)
+docker compose up
 ```
 
-## Market Opportunity
+## Available Commands
 
-| Metric | Value |
-|--------|-------|
-| Total Addressable Market | $19B annually |
-| Target Segment | Small practices (1-10 doctors) |
-| Users | 1M+ medical billers |
-| Current Denial Rate | 10-17% of all claims |
-| Manual Appeal Time | 45-60 minutes |
-| AppealGen Time | ~60 seconds |
+```bash
+# Development
+pnpm dev              # Start dev server with Turbopack
+pnpm build            # Production build
+pnpm start            # Start production server
+pnpm worker           # Start background job workers
 
-## Product Roadmap
+# Testing
+pnpm test             # Run unit tests
+pnpm test:watch       # Watch mode
+pnpm e2e:headless     # Run E2E tests
+pnpm storybook        # Component development
 
-### Phase 1: MVP
-- Medical Necessity (CO-50) appeals
-- Top 5 payer policy database
-- Core appeal generation engine
-- ChatGPT-like conversational interface
+# Code Quality
+pnpm lint             # Run ESLint
+pnpm lint:fix         # Auto-fix linting
+pnpm prettier         # Check formatting
+pnpm prettier:fix     # Fix formatting
+```
 
-### Phase 2: Growth
-- CO-11 (Diagnosis Mismatch)
-- CO-197 (Prior Auth Retro-Appeals)
-- CO-97 (Bundling/Modifier)
-- Document upload and versioning
+## Project Structure
 
-### Phase 3: Enterprise
-- Level of Care / Downcoding appeals
-- Hospital system integrations
-- Milliman/InterQual criteria support
-- Team features and API access
+```
+├── app/                    # Next.js App Router
+│   ├── (auth)/             # Auth pages (login, register)
+│   ├── api/                # API routes
+│   └── page.tsx            # Home page
+├── components/
+│   ├── auth/               # Auth components
+│   ├── providers/          # React providers
+│   └── ui/                 # shadcn/ui components
+├── lib/
+│   ├── auth/               # Better Auth config
+│   ├── db/                 # MongoDB connection
+│   ├── queue/              # BullMQ job queues
+│   └── utils/              # Utilities
+├── scripts/
+│   └── worker.ts           # Background worker
+└── docker-compose.yml      # Docker services
+```
 
-### Phase 4: Advocacy
-- Experimental/Investigational denials
-- PubMed integration for research citations
-- Patient advocacy features
+## Background Job Processing
 
-## Brand
+This boilerplate includes BullMQ + Redis for reliable background task processing.
 
-AppealGen AI brand assets are located in:
+### Pre-configured Queues
+
+| Queue | Purpose | Use Case |
+|-------|---------|----------|
+| `email` | Email sending | Welcome emails, notifications |
+| `processing` | Long-running tasks | File processing, reports |
+| `webhooks` | External HTTP calls | Third-party integrations |
+
+### Usage Example
+
+```typescript
+import { queueEmail, queueProcessing, queueWebhook } from "@/lib/queue"
+
+// Queue an email
+await queueEmail({
+  to: "user@example.com",
+  subject: "Welcome!",
+  body: "<p>Thanks for signing up</p>",
+})
+
+// Queue a processing task
+await queueProcessing({
+  userId: "user-123",
+  taskId: "task-456",
+  payload: { data: "your-data" },
+})
+
+// Queue a webhook
+await queueWebhook({
+  url: "https://api.example.com/webhook",
+  method: "POST",
+  body: { event: "user.created" },
+})
+```
+
+### Running Workers
+
+```bash
+# Local development (separate terminal)
+pnpm worker
+
+# With Docker (automatically included)
+docker compose up
+```
+
+## Authentication
+
+Better Auth is pre-configured with:
+- Email/password authentication
+- Google OAuth (optional)
+- Email verification
+- MongoDB session storage
+
+### Protecting Routes
+
+Edit `middleware.ts` to add protected routes:
+
+```typescript
+const protectedRoutes = [
+  "/dashboard",
+  "/settings",
+  // Add your protected routes here
+]
+```
+
+## Docker Services
+
+The `docker-compose.yml` includes:
+
+| Service | Port | Description |
+|---------|------|-------------|
+| `app` | 3000 | Next.js dev server |
+| `worker` | - | Background job processor |
+| `redis` | 6379 | Redis for job queues |
+
+```bash
+# Start all services
+docker compose up
+
+# Start in background
+docker compose up -d
+
+# View logs
+docker compose logs -f worker
+
+# Stop services
+docker compose down
+```
+
+## Environment Variables
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `MONGODB_URI` | Yes | MongoDB connection string |
+| `BETTER_AUTH_SECRET` | Yes | Auth secret (32+ chars) |
+| `BETTER_AUTH_URL` | Yes | App URL (e.g., http://localhost:3000) |
+| `REDIS_URL` | No | Redis URL (default: localhost:6379) |
+| `GOOGLE_CLIENT_ID` | No | Google OAuth client ID |
+| `GOOGLE_CLIENT_SECRET` | No | Google OAuth secret |
+| `RESEND_API_KEY` | No | Resend email API key |
+| `EMAIL_FROM` | No | From email address |
+| `UPLOADTHING_TOKEN` | No | Uploadthing API token |
+
+## Brand Assets
+
+Brand assets are located in:
 - `brand/` - Complete brand guidelines
-- `public/logos/` - Logo variations for all backgrounds
-- `public/icons/` - App icons and decorative elements
+- `public/logos/` - Logo variations (9 SVG files)
+- `public/icons/` - App icons and patterns
 
 ### Brand Colors
 
@@ -141,20 +233,13 @@ AppealGen AI brand assets are located in:
 
 ## Documentation
 
-### Implementation Guides
-- [Implementation Plan](docs/IMPLEMENTATION_PLAN.md) - Step-by-step development guide
-- [Decision Log](docs/DECISION_LOG.md) - Architectural decisions and rationale
-- [Progress Tracker](docs/PROGRESS_TRACKER.md) - Current status and next steps
-
-### Brand Assets
-- [Brand Guidelines](brand/brand.md) - Complete visual identity guide
-- [Logo Documentation](public/logos/logo.md) - Logo usage guidelines
-- [Icon Documentation](public/icons/icons.md) - Icon specifications
+- [CLAUDE.md](CLAUDE.md) - AI assistant context and detailed architecture
+- [brand/brand.md](brand/brand.md) - Complete brand guidelines
 
 ## License
 
-Proprietary - All Rights Reserved
+MIT
 
 ---
 
-**AppealGen AI** - Fighting denied claims, one appeal at a time.
+**Modern Next.js Boilerplate** - Built for rapid development.

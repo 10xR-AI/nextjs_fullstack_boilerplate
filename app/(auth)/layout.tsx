@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { APP_NAME, COMPANY_NAME } from "@/lib/utils/constants"
+import { APP_NAME } from "@/lib/utils/constants"
 
 export default function AuthLayout({
   children,
@@ -16,27 +16,24 @@ export default function AuthLayout({
             <Link href="/" className="flex items-center space-x-2">
               <span className="text-2xl font-bold">{APP_NAME}</span>
             </Link>
-            <p className="text-white/80 text-sm mt-1">by {COMPANY_NAME}</p>
           </div>
 
           <div className="space-y-6">
             <blockquote className="text-xl font-medium leading-relaxed">
-              &ldquo;Generate citation-backed medical denial appeals in seconds,
-              not hours. Let AI handle the paperwork while you focus on patient
-              care.&rdquo;
+              &ldquo;A production-ready Next.js starter with everything you need
+              to build modern web applications.&rdquo;
             </blockquote>
             <div className="flex items-center space-x-4">
               <div className="h-px flex-1 bg-white/30" />
               <span className="text-sm text-white/70">
-                Trusted by healthcare providers
+                Start building faster
               </span>
               <div className="h-px flex-1 bg-white/30" />
             </div>
           </div>
 
           <div className="text-sm text-white/60">
-            &copy; {new Date().getFullYear()} {COMPANY_NAME}. All rights
-            reserved.
+            &copy; {new Date().getFullYear()} {APP_NAME}. MIT License.
           </div>
         </div>
 
@@ -55,9 +52,6 @@ export default function AuthLayout({
                 {APP_NAME}
               </span>
             </Link>
-            <p className="text-muted-foreground text-sm mt-1">
-              by {COMPANY_NAME}
-            </p>
           </div>
 
           {children}

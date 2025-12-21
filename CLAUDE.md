@@ -4,20 +4,28 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**AppealGen AI** is an AI-powered medical denial appeal generator that transforms 45-minute manual appeals into 60-second AI-generated, citation-backed letters. Built with Next.js 16, React 19, and Tailwind CSS v4.
+**Modern Next.js Boilerplate** - A production-ready Next.js starter with authentication, MongoDB, background job processing, and modern tooling. Built with Next.js 16, React 19, and Tailwind CSS v4.
 
-### What This App Does
-1. Takes denial information + clinical notes as input
-2. Automatically masks all PII/PHI data for HIPAA compliance
-3. Generates appeal letters using payer-specific policies via RAG
-4. Outputs professional, downloadable appeal documents
+### What This Boilerplate Provides
+
+| Feature | Technology | Description |
+|---------|------------|-------------|
+| **Authentication** | Better Auth | Email/password + Google OAuth with session management |
+| **Database** | MongoDB | Type-safe operations with singleton connection pattern |
+| **Job Queues** | BullMQ + Redis | Reliable background job processing with retries |
+| **UI Components** | shadcn/ui | Pre-built accessible components with Radix UI |
+| **Styling** | Tailwind CSS v4 | Utility-first CSS with CVA variants |
+| **File Uploads** | Uploadthing | Easy file upload handling |
+| **Email** | Resend | Transactional email service |
+| **Testing** | Vitest + Playwright | Unit, integration, and E2E testing |
+| **Containerization** | Docker | Development environment with Redis |
 
 ### Tech Stack
 - **Framework**: Next.js 16 (App Router), React 19
 - **Styling**: Tailwind CSS v4, shadcn/ui, Radix UI
 - **Auth**: Better Auth with MongoDB adapter
-- **Database**: MongoDB
-- **PII Masking**: Custom multi-pattern service
+- **Database**: MongoDB (Atlas recommended)
+- **Job Queue**: BullMQ with Redis
 - **Testing**: Vitest, Playwright, Storybook
 - **Package Manager**: pnpm (via Corepack)
 
@@ -29,6 +37,13 @@ pnpm dev              # Start dev server with Turbopack
 pnpm build            # Production build
 pnpm start            # Start production server
 pnpm analyze          # Build with bundle analyzer
+
+# Background Workers
+pnpm worker           # Start background job workers
+
+# Docker (includes Redis)
+docker compose up     # Start all services (app + worker + redis)
+docker compose up -d  # Start in detached mode
 
 # Testing
 pnpm test             # Run Vitest unit tests
@@ -51,13 +66,45 @@ pnpm build-storybook  # Build static Storybook
 ## Architecture
 
 ### Directory Structure
-- `app/` - Next.js App Router pages and API routes
-- `components/` - Reusable React components (organized by component name with co-located tests and stories)
-- `styles/` - Global Tailwind CSS styles
-- `e2e/` - Playwright end-to-end tests
-- `brand/` - Brand guidelines and assets
-- `public/logos/` - Logo variations (9 SVG files)
-- `public/icons/` - App icons and background patterns
+```
+app/                    # Next.js App Router
+├── (auth)/             # Auth route group (login, register, verify-email)
+├── api/                # API routes
+│   ├── auth/           # Better Auth API
+│   ├── health/         # Health check endpoint
+│   └── uploadthing/    # File upload API
+├── layout.tsx          # Root layout
+└── page.tsx            # Home page
+
+components/
+├── auth/               # Auth components (login-form, register-form, oauth-buttons)
+├── providers/          # React providers (auth-provider)
+├── ui/                 # shadcn/ui components
+├── Button/             # Example component with tests and stories
+└── Tooltip/            # Example component
+
+lib/
+├── auth/               # Better Auth configuration
+├── db/                 # MongoDB connection and utilities
+├── queue/              # BullMQ job queue system
+│   ├── redis.ts        # Redis connection singleton
+│   ├── types.ts        # Job type definitions
+│   ├── queues.ts       # Queue definitions and helpers
+│   ├── workers.ts      # Worker processors
+│   └── index.ts        # Barrel export
+├── types/              # TypeScript type definitions
+├── uploadthing/        # Uploadthing configuration
+└── utils/              # Utility functions
+
+scripts/
+└── worker.ts           # Background worker entry point
+
+e2e/                    # Playwright end-to-end tests
+brand/                  # Brand guidelines and assets
+public/
+├── logos/              # Logo variations (9 SVG files)
+└── icons/              # App icons and patterns
+```
 
 ### Key Patterns
 
@@ -74,6 +121,70 @@ pnpm build-storybook  # Build static Storybook
 
 **Health Checks**: Available at `/healthz`, `/health`, `/ping`, or `/api/health` (all route to the same endpoint).
 
+### Authentication
+
+Better Auth is pre-configured with:
+- Email/password authentication
+- Google OAuth (optional)
+- Email verification via Resend
+- MongoDB session storage
+
+Protected routes are configured in `middleware.ts`. Add routes to `protectedRoutes` array.
+
+### Database
+
+MongoDB connection is managed in `lib/db/mongodb.ts`. Uses:
+- Connection pooling with singleton pattern
+- Type-safe collection access with generics
+- Cloud MongoDB (Atlas) for all environments
+
+### Background Job Processing
+
+BullMQ + Redis for reliable background job processing. Pre-configured queues:
+
+| Queue | Purpose | Concurrency |
+|-------|---------|-------------|
+| `email` | Email sending | 5 workers |
+| `processing` | Long-running tasks | 3 workers |
+| `webhooks` | External HTTP calls | 10 workers |
+
+**Adding a job to a queue:**
+```typescript
+import { queueEmail, queueProcessing, queueWebhook } from "@/lib/queue"
+
+// Queue an email
+await queueEmail({
+  to: "user@example.com",
+  subject: "Welcome!",
+  body: "<p>Thanks for signing up</p>",
+})
+
+// Queue a processing task
+await queueProcessing({
+  userId: "user-123",
+  taskId: "task-456",
+  payload: { /* your data */ },
+})
+
+// Queue a webhook
+await queueWebhook({
+  url: "https://api.example.com/webhook",
+  method: "POST",
+  body: { event: "user.created" },
+})
+```
+
+**Running workers:**
+```bash
+# Development (separate terminal)
+pnpm worker
+
+# With Docker (automatically runs worker service)
+docker compose up
+```
+
+**Custom job types**: Add new job types in `lib/queue/types.ts` and processors in `lib/queue/workers.ts`.
+
 ### Testing
 - Unit tests: Vitest with React Testing Library (files: `*.test.{ts,tsx}`)
 - E2E tests: Playwright (in `e2e/` directory)
@@ -81,6 +192,27 @@ pnpm build-storybook  # Build static Storybook
 
 ### TypeScript
 Strict mode enabled with `noUncheckedIndexedAccess`. Uses ts-reset for enhanced type safety. Absolute imports configured from project root.
+
+## Docker Development
+
+The docker-compose setup includes:
+- **app**: Next.js development server with hot reloading
+- **worker**: Background job processor
+- **redis**: Redis server for job queues (persisted data)
+
+```bash
+# Start all services
+docker compose up
+
+# Start specific service
+docker compose up app
+
+# View logs
+docker compose logs -f worker
+
+# Stop all services
+docker compose down
+```
 
 ## Brand Assets
 
@@ -111,47 +243,58 @@ Full brand guidelines are in `brand/brand.md`. Key resources:
 - **Poppins Regular (400)** - Body text, descriptions
 - **Sofia Sans Extra Condensed** - Accent labels only (use sparingly)
 
-## Implementation Documentation
+## Getting Started
 
-Detailed implementation guides are in the `docs/` folder:
+### Local Development
+```bash
+# 1. Copy environment file
+cp .env.example .env.local
 
-### Key Documents
-| Document | Purpose |
-|----------|---------|
-| [IMPLEMENTATION_PLAN.md](docs/IMPLEMENTATION_PLAN.md) | Step-by-step implementation guide with code snippets |
-| [DECISION_LOG.md](docs/DECISION_LOG.md) | Architectural and technical decisions with rationale |
-| [PROGRESS_TRACKER.md](docs/PROGRESS_TRACKER.md) | Track what's built, status, and next steps |
+# 2. Fill in required values (MongoDB URI, Better Auth secret)
 
-### Implementation Phases
-1. **Phase 1: Foundation** - Dependencies, shadcn/ui, MongoDB connection
-2. **Phase 2: Core Features** - Appeal form, PII masking, output generation
-3. **Phase 3: Auth & Users** - Better Auth, login/register, protected routes
-4. **Phase 4: Premium** - Letterhead, appeal history, dashboard
-5. **Phase 5: Enterprise** - Teams, API access, advanced analytics
+# 3. Install dependencies
+pnpm install
 
-### When Building Features
-1. Check `PROGRESS_TRACKER.md` for current status
-2. Follow steps in `IMPLEMENTATION_PLAN.md` for the relevant phase
-3. Log any decisions in `DECISION_LOG.md`
-4. Update `PROGRESS_TRACKER.md` when completing items
+# 4. Start Redis (if running workers locally)
+docker run -d -p 6379:6379 redis:7-alpine
 
-### Key Implementation Details
+# 5. Start dev server
+pnpm dev
 
-**Database Collections**:
-- `users` - User accounts and profiles
-- `providers` - Insurance payer information
-- `appeals` - Generated appeals with TTL (30 days)
-- `rulesets` - Payer-specific appeal rules
+# 6. (Optional) Start workers in another terminal
+pnpm worker
+```
 
-**PII/PHI Masking Patterns**:
-- SSN, phone, email, dates
-- Medical Record Numbers (MRN)
-- Member IDs, NPI numbers
-- Patient names, addresses
-- ICD-10 and CPT codes
+### Docker Development
+```bash
+# 1. Copy environment file
+cp .env.example .env.local
 
-**API Routes**:
-- `GET /api/providers` - List insurance providers
-- `POST /api/masking/preview` - Preview masked content
-- `POST /api/appeals/generate` - Generate appeal letter
-- `GET /api/appeals/[id]` - Retrieve saved appeal
+# 2. Fill in required values
+
+# 3. Start all services
+docker compose up
+```
+
+## API Routes
+
+| Route | Description |
+|-------|-------------|
+| `GET /api/health` | Health check endpoint |
+| `/api/auth/*` | Better Auth endpoints |
+| `/api/uploadthing` | File upload endpoint |
+
+## Environment Variables
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `MONGODB_URI` | Yes | MongoDB connection string |
+| `BETTER_AUTH_SECRET` | Yes | Auth secret (32+ chars) |
+| `BETTER_AUTH_URL` | Yes | App URL for auth |
+| `REDIS_URL` | No | Redis URL (default: localhost:6379) |
+| `GOOGLE_CLIENT_ID` | No | Google OAuth client ID |
+| `GOOGLE_CLIENT_SECRET` | No | Google OAuth secret |
+| `RESEND_API_KEY` | No | Resend email API key |
+| `EMAIL_FROM` | No | From email address |
+| `UPLOADTHING_TOKEN` | No | Uploadthing API token |
+| `NEXT_PUBLIC_APP_URL` | No | Public app URL |
