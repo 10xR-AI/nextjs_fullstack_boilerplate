@@ -1,0 +1,261 @@
+# Cursor Project Rules
+
+**⚠️ CRITICAL: Always follow the rules in RULESETS.md when generating code to prevent build and lint errors.**
+
+This project has mandatory code patterns documented in `RULESETS.md`. These rules prevent known build issues and ensure code compatibility with our tech stack.
+
+## Quick Reference
+
+Before generating ANY code, check these mandatory patterns:
+
+### 1. Error Handling (Catch Blocks)
+**MANDATORY**: Always type catch block errors as `unknown`
+
+```typescript
+// ❌ WRONG
+catch (error) {
+  console.error(error.message)
+}
+
+// ✅ CORRECT
+catch (error: unknown) {
+  const message = error instanceof Error ? error.message : String(error)
+  console.error(message)
+}
+```
+
+### 2. Mongoose Model Operations
+**MANDATORY**: Always use `(Model as any).method()` pattern
+
+```typescript
+// ❌ WRONG
+const user = await User.findOne({ email })
+
+// ✅ CORRECT
+const user = await (User as any).findOne({ email })
+```
+
+**Apply to**: `create()`, `find()`, `findOne()`, `findById()`, `findOneAndUpdate()`, `findByIdAndUpdate()`, `countDocuments()`, `deleteOne()`, `deleteMany()`, `updateOne()`, `updateMany()`
+
+### 3. Zod v4 Validation
+**MANDATORY**: Use `.refine()` for URL/email validation, specify key type for `z.record()`
+
+```typescript
+// ❌ WRONG
+link: z.string().url().optional()
+metadata: z.record(z.any()).optional()
+
+// ✅ CORRECT
+link: z.string().refine(
+  (val) => {
+    if (!val) return true
+    try {
+      new URL(val)
+      return true
+    } catch {
+      return false
+    }
+  },
+  { message: "Invalid URL format" }
+).optional()
+metadata: z.record(z.string(), z.any()).optional()
+```
+
+### 4. JSON Parsing
+**MANDATORY**: Always type assert `await request.json()` and `await response.json()`
+
+```typescript
+// ❌ WRONG
+const body = await request.json()
+const { messages, task } = body
+
+// ✅ CORRECT
+const body = (await request.json()) as {
+  messages?: AgentMessage[]
+  task?: string
+  organizationId?: string
+}
+const { messages, task } = body
+```
+
+### 5. Better Auth Import Paths
+**MANDATORY**: Use `better-auth/client/plugins` for client-side plugins
+
+```typescript
+// ❌ WRONG
+import { organizationClient } from "better-auth/react/plugins"
+
+// ✅ CORRECT
+import { organizationClient } from "better-auth/client/plugins"
+```
+
+### 6. JSX in TypeScript Files
+**MANDATORY**: Always use `.tsx` extension for files containing JSX
+
+```typescript
+// ❌ WRONG - MyComponent.ts
+export function MyComponent() {
+  return <div>Hello</div>
+}
+
+// ✅ CORRECT - MyComponent.tsx
+export function MyComponent() {
+  return <div>Hello</div>
+}
+```
+
+### 7. Next.js 16 Middleware
+**MANDATORY**: Always use `proxy.ts`, never `middleware.ts`
+
+```typescript
+// ❌ WRONG - middleware.ts
+export function middleware() { ... }
+
+// ✅ CORRECT - proxy.ts
+export function proxy() { ... }
+```
+
+### 8. NextRequest IP Address
+**MANDATORY**: Extract IP from headers, never use `req.ip`
+
+```typescript
+// ❌ WRONG
+const ip = req.ip
+
+// ✅ CORRECT
+const ip = req.headers.get("x-forwarded-for")?.split(",")[0] || 
+           req.headers.get("x-real-ip") || 
+           "anonymous"
+```
+
+### 9. Stripe API Version
+**MANDATORY**: Use API version `"2025-02-24.acacia"` for Stripe
+
+```typescript
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: "2025-02-24.acacia",
+})
+```
+
+### 10. Lazy Initialization
+**MANDATORY**: Use lazy initialization for third-party clients requiring environment variables (Stripe, Redis, etc.)
+
+```typescript
+// ❌ WRONG - Fails during build if env var missing
+if (!process.env.STRIPE_SECRET_KEY) {
+  throw new Error("STRIPE_SECRET_KEY is not set")
+}
+export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+  apiVersion: "2025-02-24.acacia",
+})
+
+// ✅ CORRECT - Lazy initialization
+let stripeInstance: Stripe | null = null
+
+function getStripe(): Stripe {
+  if (!stripeInstance) {
+    if (!process.env.STRIPE_SECRET_KEY) {
+      throw new Error("STRIPE_SECRET_KEY is not set")
+    }
+    stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: "2025-02-24.acacia",
+      typescript: true,
+    })
+  }
+  return stripeInstance
+}
+
+export const stripe = new Proxy({} as Stripe, {
+  get(_target, prop) {
+    return getStripe()[prop as keyof Stripe]
+  },
+})
+```
+
+### 11. Reduce Function Type Annotations
+**MANDATORY**: Always type reduce callback parameters explicitly
+
+```typescript
+// ❌ WRONG
+const total = items.reduce((sum, item) => sum + item.value, 0)
+
+// ✅ CORRECT
+const total = items.reduce((sum: number, item: any) => sum + item.value, 0)
+```
+
+### 12. Mongoose Document Property Conflicts
+**MANDATORY**: Use `Omit<mongoose.Document, "conflictingProperty">` when interface properties conflict
+
+```typescript
+// ❌ WRONG
+export interface ICost extends mongoose.Document {
+  model: string // Conflicts with Document.model
+}
+
+// ✅ CORRECT
+export interface ICost extends Omit<mongoose.Document, "model"> {
+  model: string // Now safe
+}
+```
+
+### 13. Mongoose Duplicate Index Warnings
+**MANDATORY**: Use only one indexing method - either `index: true` OR `Schema.index()`, not both
+
+```typescript
+// ❌ WRONG - Duplicate index definition
+const Schema = new Schema({
+  tags: [{ type: String, index: true }], // Index defined here
+})
+Schema.index({ tags: 1 }) // And here - causes duplicate
+
+// ✅ CORRECT - Use only one method
+const Schema = new Schema({
+  tags: [{ type: String }], // No index here
+})
+Schema.index({ tags: 1 }) // Only here
+```
+
+### 14. BullMQ Queue Types
+**MANDATORY**: Use type assertions for Queue constructors and Redis connections
+
+```typescript
+// ✅ CORRECT - Queue creation
+let emailQueue: Queue<EmailJobData> | null = null
+
+export function getEmailQueue(): Queue<EmailJobData> {
+  if (!emailQueue) {
+    emailQueue = new Queue(QUEUE_NAMES.EMAIL, {
+      connection: getRedis() as any, // Type assertion for Redis connection
+      ...defaultQueueOptions,
+    }) as Queue<EmailJobData>
+  }
+  return emailQueue
+}
+
+// ✅ CORRECT - Worker creation
+const emailWorker = new Worker(QUEUE_NAMES.EMAIL, processEmailJob, {
+  connection: createRedisConnection() as any, // Type assertion for Redis connection
+  concurrency: 5,
+})
+```
+
+## Full Documentation
+
+For complete details, examples, and additional rules, see `RULESETS.md` in the project root.
+
+## Build Checklist
+
+Before generating code, verify:
+- [ ] All catch blocks type errors as `unknown`
+- [ ] All Mongoose model calls use `(Model as any).method()` pattern
+- [ ] All `request.json()` and `response.json()` have type assertions
+- [ ] All Zod validations use v4-compatible syntax (`.refine()` for URLs/emails, `z.record(keyType, valueType)`)
+- [ ] No JSX in `.ts` files (use `.tsx`)
+- [ ] Better Auth imports use correct paths (`better-auth/client/plugins`)
+- [ ] IP addresses extracted from headers, not `req.ip`
+- [ ] Reduce callbacks have explicit type annotations
+- [ ] Third-party clients (Stripe, Redis, etc.) use lazy initialization
+- [ ] No duplicate Mongoose index definitions
+- [ ] BullMQ connections use type assertions
+
+**ALWAYS reference RULESETS.md for the complete, detailed rules before generating code.**
