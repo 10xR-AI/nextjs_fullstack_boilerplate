@@ -1,5 +1,6 @@
 import { headers } from "next/headers"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { ContentBlock, ContentBlockDescription, ContentBlockHeader, ContentBlockTitle } from "@/components/ui/content-block"
+import { Metric, MetricGrid } from "@/components/ui/metric"
 import { getAuditLogs } from "@/lib/audit/logger"
 import { auth } from "@/lib/auth"
 import { connectDB } from "@/lib/db/mongoose"
@@ -27,64 +28,48 @@ export default async function AdminDashboard() {
   const recentActivity = await getAuditLogs({ limit: 10 })
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-        <p className="text-muted-foreground">Platform administration and monitoring</p>
+    <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-6">
+      <div className="space-y-0.5">
+        <h1 className="text-lg font-semibold">Admin Dashboard</h1>
+        <p className="mt-0.5 text-sm text-foreground">Platform administration and monitoring</p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card>
-          <CardHeader>
-            <CardTitle>Users</CardTitle>
-            <CardDescription>Total registered users</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{userCount}</div>
-          </CardContent>
-        </Card>
+      <MetricGrid>
+        <Metric
+          label="Users"
+          value={userCount}
+          description="Total registered users"
+        />
+        <Metric
+          label="Organizations"
+          value={orgCount}
+          description="Total organizations"
+        />
+        <Metric
+          label="Active Subscriptions"
+          value={subscriptionCount}
+          description="Currently active subscriptions"
+        />
+      </MetricGrid>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Organizations</CardTitle>
-            <CardDescription>Total organizations</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{orgCount}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Active Subscriptions</CardTitle>
-            <CardDescription>Currently active subscriptions</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{subscriptionCount}</div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Activity</CardTitle>
-          <CardDescription>Latest audit log entries</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            {recentActivity.map((log) => (
-              <div key={log._id.toString()} className="flex justify-between text-sm">
-                <span>
-                  {log.action} {log.resource}
-                </span>
-                <span className="text-muted-foreground">
-                  {new Date(log.createdAt).toLocaleString()}
-                </span>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      <ContentBlock>
+        <ContentBlockHeader>
+          <ContentBlockTitle>Recent Activity</ContentBlockTitle>
+          <ContentBlockDescription>Latest audit log entries</ContentBlockDescription>
+        </ContentBlockHeader>
+        <div className="space-y-2">
+          {recentActivity.map((log) => (
+            <div key={log._id.toString()} className="flex justify-between text-sm">
+              <span className="text-foreground">
+                {log.action} {log.resource}
+              </span>
+              <span className="text-muted-foreground">
+                {new Date(log.createdAt).toLocaleString()}
+              </span>
+            </div>
+          ))}
+        </div>
+      </ContentBlock>
     </div>
   )
 }

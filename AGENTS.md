@@ -330,6 +330,7 @@ docker compose up
 
 - [README.md](README.md) - **Complete setup and usage guide** - Installation, configuration, and how to use all features
 - [ARCHITECTURE.md](ARCHITECTURE.md) - **Architecture documentation** - Database architecture, multi-tenancy, AI agents, billing, analytics, and system design
+- [UI_UX_GUIDE.md](UI_UX_GUIDE.md) - **UI/UX Reference Guide** - Complete design system, component patterns, and implementation standards. **Authoritative reference for all UI/UX decisions.**
 - [CLAUDE.md](CLAUDE.md) - **Claude Code guidance** - Similar documentation for Claude AI
 - [GEMINI.md](GEMINI.md) - **Gemini/Antigravity guidance** - Similar documentation for Gemini AI
 - [brand/brand.md](brand/brand.md) - Complete brand guidelines and assets

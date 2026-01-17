@@ -1,6 +1,8 @@
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 import { SubscriptionCard } from "@/components/billing/subscription-card"
+import { Button } from "@/components/ui/button"
+import { ContentBlock, ContentBlockDescription, ContentBlockHeader, ContentBlockTitle } from "@/components/ui/content-block"
 import { auth } from "@/lib/auth"
 import { connectDB } from "@/lib/db/mongoose"
 import { Subscription } from "@/lib/models/billing"
@@ -21,38 +23,37 @@ export default async function BillingPage() {
   })
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Billing & Subscription</h1>
-        <p className="text-muted-foreground">Manage your subscription and billing</p>
+    <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-6">
+      <div className="space-y-0.5">
+        <h1 className="text-lg font-semibold">Billing & Subscription</h1>
+        <p className="mt-0.5 text-sm text-foreground">Manage your subscription and billing</p>
       </div>
 
       <SubscriptionCard currentPlan={subscription?.planId} />
 
       {subscription && (
-        <div className="mt-6">
-          <h2 className="text-xl font-semibold mb-4">Current Subscription</h2>
+        <ContentBlock>
+          <ContentBlockHeader>
+            <ContentBlockTitle>Current Subscription</ContentBlockTitle>
+          </ContentBlockHeader>
           <div className="space-y-2">
-            <p>
+            <p className="text-sm text-foreground">
               <strong>Plan:</strong> {subscription.planId}
             </p>
-            <p>
+            <p className="text-sm text-foreground">
               <strong>Status:</strong> {subscription.status}
             </p>
-            <p>
+            <p className="text-sm text-foreground">
               <strong>Renews:</strong>{" "}
               {new Date(subscription.currentPeriodEnd).toLocaleDateString()}
             </p>
-            <form action="/api/billing/portal" method="POST">
-              <button
-                type="submit"
-                className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded"
-              >
-                Manage Subscription
-              </button>
-            </form>
           </div>
-        </div>
+          <form action="/api/billing/portal" method="POST" className="pt-4">
+            <Button type="submit" size="sm">
+              Manage Subscription
+            </Button>
+          </form>
+        </ContentBlock>
       )}
     </div>
   )

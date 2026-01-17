@@ -1,23 +1,23 @@
 import type { Metadata } from "next"
 import { OAuthButtons, RegisterForm } from "@/components/auth"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 
 export const metadata: Metadata = {
   title: "Create Account",
-  description: "Create a new AppealGen AI account",
+  description: "Create a new account",
 }
 
 export default function RegisterPage() {
   return (
-    <Card className="border-0 shadow-none lg:border lg:shadow-sm">
-      <CardHeader className="space-y-1 text-center">
-        <CardTitle className="text-2xl font-bold">Create an account</CardTitle>
-        <CardDescription>
-          Get started with AppealGen AI today
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
+    <div className="max-w-md mx-auto space-y-6">
+      <div className="space-y-0.5 text-center">
+        <h1 className="text-lg font-semibold">Create an account</h1>
+        <p className="mt-0.5 text-sm text-foreground">
+          Get started today
+        </p>
+      </div>
+
+      <div className="space-y-4">
         <OAuthButtons mode="register" />
 
         <div className="relative">
@@ -32,7 +32,7 @@ export default function RegisterPage() {
         </div>
 
         <RegisterForm />
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }

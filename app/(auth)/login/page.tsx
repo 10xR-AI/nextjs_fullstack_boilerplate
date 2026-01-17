@@ -1,23 +1,23 @@
 import type { Metadata } from "next"
 import { LoginForm, OAuthButtons } from "@/components/auth"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 
 export const metadata: Metadata = {
   title: "Sign In",
-  description: "Sign in to your AppealGen AI account",
+  description: "Sign in to your account",
 }
 
 export default function LoginPage() {
   return (
-    <Card className="border-0 shadow-none lg:border lg:shadow-sm">
-      <CardHeader className="space-y-1 text-center">
-        <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
-        <CardDescription>
+    <div className="max-w-md mx-auto space-y-6">
+      <div className="space-y-0.5 text-center">
+        <h1 className="text-lg font-semibold">Welcome back</h1>
+        <p className="mt-0.5 text-sm text-foreground">
           Sign in to your account to continue
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
+        </p>
+      </div>
+
+      <div className="space-y-4">
         <OAuthButtons mode="login" />
 
         <div className="relative">
@@ -32,7 +32,7 @@ export default function LoginPage() {
         </div>
 
         <LoginForm />
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }

@@ -3,10 +3,12 @@
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { ContentBlock } from "@/components/ui/content-block"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Progress } from "@/components/ui/progress"
+import { Section } from "@/components/ui/section"
+import { Spinner } from "@/components/ui/spinner"
 import type { OnboardingStep } from "@/lib/onboarding/flow"
 
 const steps: { key: OnboardingStep; title: string; description: string }[] = [
@@ -69,36 +71,38 @@ export function OnboardingFlow({
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Welcome! Let's get started</h1>
-        <p className="text-muted-foreground mt-2">
+      <div className="space-y-0.5">
+        <h1 className="text-lg font-semibold">Welcome! Let's get started</h1>
+        <p className="mt-0.5 text-sm text-foreground">
           Complete these steps to set up your account
         </p>
       </div>
 
       <Progress value={progress} className="h-2" />
 
-      <Card>
-        <CardHeader>
-          <CardTitle>{steps[currentStepIndex]?.title}</CardTitle>
-          <CardDescription>{steps[currentStepIndex]?.description}</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
+      <ContentBlock>
+        <Section>
+          <div className="space-y-0.5">
+            <h2 className="text-sm font-semibold">{steps[currentStepIndex]?.title}</h2>
+            <p className="text-xs text-foreground">{steps[currentStepIndex]?.description}</p>
+          </div>
+
           {currentStep === "welcome" && (
             <div className="space-y-4">
-              <p>Welcome to the platform! Let's set up your account.</p>
+              <p className="text-sm text-foreground">Welcome to the platform! Let's set up your account.</p>
             </div>
           )}
 
           {currentStep === "profile" && (
             <div className="space-y-4">
-              <div>
-                <Label htmlFor="name">Full Name</Label>
+              <div className="space-y-1.5">
+                <Label htmlFor="name" className="text-xs text-muted-foreground">Full Name</Label>
                 <Input
                   id="name"
                   value={formData.name || ""}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   placeholder="John Doe"
+                  className="h-9"
                 />
               </div>
             </div>
@@ -106,10 +110,11 @@ export function OnboardingFlow({
 
           {currentStep === "organization" && (
             <div className="space-y-4">
-              <p>Would you like to create an organization or join an existing one?</p>
+              <p className="text-sm text-foreground">Would you like to create an organization or join an existing one?</p>
               <div className="flex gap-2">
                 <Button
                   variant="outline"
+                  size="sm"
                   onClick={() => {
                     setFormData({ ...formData, action: "create" })
                     handleNext()
@@ -119,6 +124,7 @@ export function OnboardingFlow({
                 </Button>
                 <Button
                   variant="outline"
+                  size="sm"
                   onClick={() => {
                     setFormData({ ...formData, action: "skip" })
                     handleNext()
@@ -132,20 +138,27 @@ export function OnboardingFlow({
 
           {currentStep === "preferences" && (
             <div className="space-y-4">
-              <p>Set your preferences to personalize your experience.</p>
+              <p className="text-sm text-foreground">Set your preferences to personalize your experience.</p>
             </div>
           )}
 
           <div className="flex justify-between pt-4">
-            <Button variant="ghost" onClick={handleSkip} disabled={loading}>
+            <Button variant="ghost" size="sm" onClick={handleSkip} disabled={loading}>
               Skip
             </Button>
-            <Button onClick={handleNext} disabled={loading}>
-              {currentStepIndex === steps.length - 1 ? "Complete" : "Next"}
+            <Button size="sm" onClick={handleNext} disabled={loading}>
+              {loading ? (
+                <>
+                  <Spinner className="mr-2 h-3.5 w-3.5" />
+                  {currentStepIndex === steps.length - 1 ? "Completing..." : "Loading..."}
+                </>
+              ) : (
+                currentStepIndex === steps.length - 1 ? "Complete" : "Next"
+              )}
             </Button>
           </div>
-        </CardContent>
-      </Card>
+        </Section>
+      </ContentBlock>
     </div>
   )
 }

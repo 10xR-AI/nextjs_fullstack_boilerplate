@@ -1,6 +1,6 @@
 "use client"
 
-import { AlertCircle, CheckCircle2, Loader2, Lock, Mail, User } from "lucide-react"
+import { AlertCircle, CheckCircle2, Lock, Mail, User } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
@@ -8,6 +8,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Spinner } from "@/components/ui/spinner"
 import { signUp } from "@/lib/auth/client"
 
 export function RegisterForm() {
@@ -74,10 +75,11 @@ export function RegisterForm() {
           </AlertDescription>
         </Alert>
 
-        <div className="text-center text-sm text-muted-foreground">
+        <div className="text-center text-sm text-foreground">
           <p>Didn&apos;t receive the email?</p>
           <Button
             variant="link"
+            size="sm"
             className="p-0 h-auto"
             onClick={() => setSuccess(false)}
           >
@@ -85,7 +87,7 @@ export function RegisterForm() {
           </Button>
         </div>
 
-        <p className="text-center text-sm text-muted-foreground">
+        <p className="text-center text-sm text-foreground">
           Already verified?{" "}
           <Link href="/login" className="text-primary hover:underline">
             Sign in
@@ -104,8 +106,8 @@ export function RegisterForm() {
         </Alert>
       )}
 
-      <div className="space-y-2">
-        <Label htmlFor="name">Full Name</Label>
+      <div className="space-y-1.5">
+        <Label htmlFor="name" className="text-xs text-muted-foreground">Full Name</Label>
         <div className="relative">
           <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -114,15 +116,15 @@ export function RegisterForm() {
             placeholder="John Doe"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="pl-10"
+            className="h-9 pl-10"
             required
             disabled={isLoading}
           />
         </div>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
+      <div className="space-y-1.5">
+        <Label htmlFor="email" className="text-xs text-muted-foreground">Email</Label>
         <div className="relative">
           <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -131,15 +133,15 @@ export function RegisterForm() {
             placeholder="you@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="pl-10"
+            className="h-9 pl-10"
             required
             disabled={isLoading}
           />
         </div>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="password">Password</Label>
+      <div className="space-y-1.5">
+        <Label htmlFor="password" className="text-xs text-muted-foreground">Password</Label>
         <div className="relative">
           <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -148,7 +150,7 @@ export function RegisterForm() {
             placeholder="Create a password (min. 8 characters)"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="pl-10"
+            className="h-9 pl-10"
             required
             minLength={8}
             disabled={isLoading}
@@ -156,8 +158,8 @@ export function RegisterForm() {
         </div>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="confirmPassword">Confirm Password</Label>
+      <div className="space-y-1.5">
+        <Label htmlFor="confirmPassword" className="text-xs text-muted-foreground">Confirm Password</Label>
         <div className="relative">
           <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -166,17 +168,17 @@ export function RegisterForm() {
             placeholder="Confirm your password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            className="pl-10"
+            className="h-9 pl-10"
             required
             disabled={isLoading}
           />
         </div>
       </div>
 
-      <Button type="submit" className="w-full" disabled={isLoading}>
+      <Button type="submit" size="sm" className="w-full" disabled={isLoading}>
         {isLoading ? (
           <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            <Spinner className="mr-2 h-3.5 w-3.5" />
             Creating account...
           </>
         ) : (
@@ -184,14 +186,14 @@ export function RegisterForm() {
         )}
       </Button>
 
-      <p className="text-center text-sm text-muted-foreground">
+      <p className="text-center text-sm text-foreground">
         Already have an account?{" "}
         <Link href="/login" className="text-primary hover:underline">
           Sign in
         </Link>
       </p>
 
-      <p className="text-center text-xs text-muted-foreground">
+      <p className="text-center text-xs text-foreground">
         By creating an account, you agree to our{" "}
         <Link href="/terms" className="underline hover:text-primary">
           Terms of Service

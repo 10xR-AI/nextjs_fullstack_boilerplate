@@ -1,8 +1,8 @@
 "use client"
 
-import { Loader2 } from "lucide-react"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
+import { Spinner } from "@/components/ui/spinner"
 import { signIn } from "@/lib/auth/client"
 
 // Google icon SVG
@@ -55,12 +55,13 @@ export function OAuthButtons({ mode = "login" }: OAuthButtonsProps) {
       <Button
         type="button"
         variant="outline"
+        size="sm"
         className="w-full"
         onClick={handleGoogleSignIn}
         disabled={isGoogleLoading}
       >
         {isGoogleLoading ? (
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          <Spinner className="mr-2 h-3.5 w-3.5" />
         ) : (
           <GoogleIcon className="mr-2 h-4 w-4" />
         )}

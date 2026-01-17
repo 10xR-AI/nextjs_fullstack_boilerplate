@@ -4,7 +4,8 @@ import { Check } from "lucide-react"
 import { useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { ContentBlock } from "@/components/ui/content-block"
+import { Spinner } from "@/components/ui/spinner"
 import { trackEvent } from "@/lib/analytics/client"
 
 interface Plan {
@@ -65,43 +66,50 @@ export function SubscriptionCard({ currentPlan }: { currentPlan?: string }) {
   return (
     <div className="grid gap-4 md:grid-cols-3">
       {plans.map((plan) => (
-        <Card key={plan.id} className={plan.popular ? "border-primary" : ""}>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle>{plan.name}</CardTitle>
-              {plan.popular && <Badge>Popular</Badge>}
+        <ContentBlock
+          key={plan.id}
+          className={plan.popular ? "border-primary ring-1 ring-primary/20" : ""}
+        >
+            <div className="space-y-0.5">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-semibold">{plan.name}</h3>
+                {plan.popular && <Badge>Popular</Badge>}
+              </div>
+              <div className="flex items-baseline gap-1">
+                <span className="text-2xl font-semibold">{plan.price}</span>
+                {plan.price !== "Custom" && <span className="text-sm text-foreground">/month</span>}
+              </div>
             </div>
-            <CardDescription>
-              <span className="text-2xl font-bold">{plan.price}</span>
-              {plan.price !== "Custom" && <span className="text-sm">/month</span>}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ul className="space-y-2 mb-4">
+            <ul className="space-y-2">
               {plan.features.map((feature) => (
                 <li key={feature} className="flex items-center gap-2">
                   <Check className="h-4 w-4 text-primary" />
-                  <span className="text-sm">{feature}</span>
+                  <span className="text-sm text-foreground">{feature}</span>
                 </li>
               ))}
             </ul>
             <Button
+              size="sm"
               className="w-full"
               variant={plan.popular ? "default" : "outline"}
               onClick={() => handleSubscribe(plan.id)}
               disabled={loading === plan.id || currentPlan === plan.id}
             >
-              {loading === plan.id
-                ? "Loading..."
-                : currentPlan === plan.id
-                  ? "Current Plan"
-                  : plan.price === "Custom"
-                    ? "Contact Sales"
-                    : "Subscribe"}
+              {loading === plan.id ? (
+                <>
+                  <Spinner className="mr-2 h-3.5 w-3.5" />
+                  Loading...
+                </>
+              ) : currentPlan === plan.id ? (
+                "Current Plan"
+              ) : plan.price === "Custom" ? (
+                "Contact Sales"
+              ) : (
+                "Subscribe"
+              )}
             </Button>
-          </CardContent>
-        </Card>
-      ))}
+          </ContentBlock>
+        ))}
     </div>
   )
 }

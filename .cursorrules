@@ -259,3 +259,123 @@ Before generating code, verify:
 - [ ] BullMQ connections use type assertions
 
 **ALWAYS reference RULESETS.md for the complete, detailed rules before generating code.**
+
+---
+
+## UI/UX Documentation & Component Libraries
+
+**⚠️ CRITICAL: Always reference UI/UX documentation when building or updating UI components.**
+
+### Primary UI/UX Reference
+
+**Authoritative Guide:** [UI_UX_GUIDE.md](UI_UX_GUIDE.md)
+- **Complete design system and implementation standards**
+- **Enterprise SaaS quality standards** (Stripe, Linear, Atlassian, Notion)
+- **Component patterns and usage for all features**
+- **Shadcn UI component reference (438+ components)**
+- **Typography, spacing, color system, and layout templates**
+- **Feature-specific patterns and quality checklists**
+
+**ALWAYS reference UI_UX_GUIDE.md before building or modifying any UI components.**
+
+### Component Libraries
+
+#### 1. Shadcn UI (Primary Component Library)
+
+**Project Standard:** Use Shadcn UI for all new components and UI updates.
+
+**Documentation Sources:**
+- **Official Registry:** https://ui.shadcn.com
+- **Component Docs:** https://ui.shadcn.com/docs/components/[component-name]
+- **MCP Server:** Use `mcp_presenter-agent-ui-shadcn_*` tools to explore and view components
+- **GitHub:** https://github.com/shadcn-ui/ui
+
+**Access Methods:**
+```bash
+# Via CLI
+pnpm dlx shadcn@latest add [component-name]
+
+# Via MCP Tools (Recommended)
+# Use mcp_presenter-agent-ui-shadcn_* tools for exploration
+```
+
+**Key Guidelines:**
+- ✅ Use Shadcn components for consistency
+- ✅ Follow component patterns from examples
+- ✅ Customize via className, not by modifying source
+- ✅ Use `size="sm"` for buttons in application context
+- ✅ Use `h-9` for inputs
+- ❌ Never modify Shadcn component source files directly
+- ❌ Never use `Loader2` (use `Spinner` from `@shadcn/spinner` instead)
+
+**Available Components:** 438+ components including:
+- Layout: Card, Separator, Sidebar, Breadcrumb, Tabs
+- Forms: Input, Label, Textarea, Select, Checkbox, Radio, Switch, Accordion
+- Feedback: Alert, Badge, Spinner, Skeleton, Progress, Toast
+- Data: Table, Pagination, Empty, Avatar
+- Overlays: Dialog, Drawer, Sheet, Dropdown Menu, Popover, Tooltip
+- Advanced: Command, Calendar, Chart, Carousel, Form
+
+**See UI_UX_GUIDE.md Part III for complete component reference.**
+
+#### 2. Material UI (MUI) - Reference Only
+
+**Purpose:** Reference for component patterns, accessibility standards, and design principles.
+
+**Documentation Sources:**
+- **Official Docs:** https://mui.com/material-ui/
+- **Component Library:** https://mui.com/material-ui/all-components/
+- **Design Guidelines:** https://mui.com/material-ui/customization/theming/
+- **Accessibility:** https://mui.com/material-ui/customization/accessibility/
+
+**Usage:**
+- Reference Material UI documentation for:
+  - Component design patterns
+  - Accessibility best practices
+  - Typography and spacing principles
+  - Form validation patterns
+  - Data table patterns
+
+**Note:** This project uses **Shadcn UI** as the primary component library. Material UI serves as a reference for design patterns and best practices, not for direct component usage.
+
+#### 3. Chakra UI - Reference Only
+
+**Purpose:** Reference for component composition, theme system, and responsive design patterns.
+
+**Documentation Sources:**
+- **Official Docs:** https://chakra-ui.com/docs/components
+- **Component Library:** https://chakra-ui.com/docs/components
+- **Styling Guide:** https://chakra-ui.com/docs/styling
+- **Form Components:** https://chakra-ui.com/docs/form
+
+**Usage:**
+- Reference Chakra UI documentation for:
+  - Component composition patterns
+  - Theme system and customization
+  - Responsive design patterns
+  - Form component patterns
+  - Layout and grid systems
+
+**Note:** This project uses **Shadcn UI** as the primary component library. Chakra UI serves as a reference for design patterns and best practices, not for direct component usage.
+
+### Documentation Reference Priority
+
+**When building or updating UI components, follow this priority:**
+
+1. **UI_UX_GUIDE.md** - Primary authoritative reference for all UI/UX decisions
+2. **Shadcn UI Documentation** - For component implementation and examples
+3. **Material UI / Chakra UI Documentation** - For design pattern references (concepts only)
+
+### Quick Reference Checklist
+
+Before building any UI component, verify:
+- [ ] Reviewed UI_UX_GUIDE.md for relevant patterns
+- [ ] Checked Shadcn UI registry for available components
+- [ ] Followed typography hierarchy (text-lg for titles, text-sm for body)
+- [ ] Used correct spacing (space-y-6 for sections, space-y-4 for forms)
+- [ ] Applied proper colors (text-foreground for primary content, bg-muted/30 for cards)
+- [ ] Used Shadcn components (not custom duplicates)
+- [ ] Followed component patterns from examples
+- [ ] Validated against UI_UX_GUIDE.md checklists
+
+**ALWAYS reference UI_UX_GUIDE.md and Shadcn UI documentation before generating UI code.**

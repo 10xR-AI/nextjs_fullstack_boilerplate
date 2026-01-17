@@ -16,13 +16,13 @@ export default function HomePage() {
               height={32}
               className="h-8 w-8"
             />
-            <span className="text-xl font-semibold">Boilerplate</span>
+            <span className="text-lg font-semibold">Boilerplate</span>
           </div>
           <nav className="flex items-center gap-4">
-            <Button variant="ghost" asChild>
+            <Button variant="ghost" size="sm" asChild>
               <Link href="/login">Sign In</Link>
             </Button>
-            <Button asChild>
+            <Button size="sm" asChild>
               <Link href="/register">Get Started</Link>
             </Button>
           </nav>
@@ -31,14 +31,14 @@ export default function HomePage() {
 
       {/* Hero Section */}
       <main className="flex flex-1 flex-col items-center justify-center px-4 text-center">
-        <h1 className="mb-4 text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
+        <h1 className="mb-4 text-lg font-semibold">
           Modern{" "}
           <span className="bg-gradient-to-r from-[#559EFF] to-[#0065BA] bg-clip-text text-transparent">
             Next.js
           </span>{" "}
           Boilerplate
         </h1>
-        <p className="mb-8 max-w-2xl text-lg text-muted-foreground">
+        <p className="mb-8 max-w-2xl text-sm text-foreground">
           A production-ready starter with authentication, MongoDB, background
           job processing, and all the essentials to build your next project
           faster.
